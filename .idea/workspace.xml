@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9fb50552-d309-44e1-a17a-c5c9d34db5fa" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/errors.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/LICENCE.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,16 +60,32 @@
       <option name="presentableId" value="Default" />
       <updated>1603736634290</updated>
     </task>
+    <task id="LOCAL-00001" summary="Cleaning up">
+      <created>1603820175439</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1603820175439</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Cleaning up" />
+    <option name="LAST_COMMIT_MESSAGE" value="Cleaning up" />
   </component>
   <component name="WindowStateProjectService">
     <state x="2675" y="201" width="400" height="681" key="#GOPATH" timestamp="1603736683842">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2675" y="201" width="400" height="681" key="#GOPATH/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1603736683842" />
+    <state x="2419" y="112" width="912" height="859" key="CommitChangelistDialog2" timestamp="1603820175282">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2419" y="112" width="912" height="859" key="CommitChangelistDialog2/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1603820175282" />
     <state x="2658" y="299" width="424" height="488" key="FileChooserDialogImpl" timestamp="1603736998395">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
@@ -81,10 +98,10 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2700" y="249" width="349" height="586" key="Github.UntrackedFilesDialog/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1603820069381" />
-    <state x="2475" y="276" width="800" height="532" key="Vcs.Push.Dialog.v2" timestamp="1603820134468">
+    <state x="2475" y="276" width="800" height="532" key="Vcs.Push.Dialog.v2" timestamp="1603820176761">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
-    <state x="2475" y="276" width="800" height="532" key="Vcs.Push.Dialog.v2/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1603820134468" />
+    <state x="2475" y="276" width="800" height="532" key="Vcs.Push.Dialog.v2/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1603820176761" />
     <state x="2563" y="174" width="634" height="732" key="find.popup" timestamp="1603786791841">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>

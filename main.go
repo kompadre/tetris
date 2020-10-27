@@ -13,28 +13,28 @@ import (
 const TCols = 12
 const TRows = 16
 
-var field [TRows+1][TCols+1]int
+var field [TRows + 1][TCols + 1]int
 var debug = ""
 var framesPerMove = 40
 
 type Piece struct {
-	I int
-	W int
-	H int
-	Off int
-	OffX int
-	Shape [4][2]int
+	I        int
+	W        int
+	H        int
+	Off      int
+	OffX     int
+	Shape    [4][2]int
 	Rotation int
 }
 
 var pieces = []Piece{
-	{ I:0, W:4, H:1, Shape: [4][2]int{ {0, 0}, {1, 0}, {2, 0}, {3, 0} } }, // ----
-	{ I:1, W:2, H:2, Shape: [4][2]int{ {0, 0}, {0, 1}, {1, 0}, {1, 1} } }, // ::
-	{ I:2, W:3, H:2, Shape: [4][2]int{ {0, 0}, {0, 1}, {0, 2}, {1, 1} } }, // T
-	{ I:3, W:2, H:4, Shape: [4][2]int{ {0, 0}, {0, 1}, {1, 1}, {1, 2} } }, // 4
-	{ I:4, W:2, H:4, Shape: [4][2]int{ {1, 0}, {1, 1}, {0, 1}, {0, 2} } }, // h
-	{ I:5, W:3, H:2, Shape: [4][2]int{ {0, 0}, {1, 0}, {2, 0}, {1, 0} } }, // L
-	{ I:5, W:3, H:2, Shape: [4][2]int{ {0, 2}, {1, 2}, {1, 1}, {1, 0} } }, // other L
+	{I: 0, W: 4, H: 1, Shape: [4][2]int{{0, 0}, {1, 0}, {2, 0}, {3, 0}}}, // ----
+	{I: 1, W: 2, H: 2, Shape: [4][2]int{{0, 0}, {0, 1}, {1, 0}, {1, 1}}}, // ::
+	{I: 2, W: 3, H: 2, Shape: [4][2]int{{0, 0}, {0, 1}, {0, 2}, {1, 1}}}, // T
+	{I: 3, W: 2, H: 4, Shape: [4][2]int{{0, 0}, {0, 1}, {1, 1}, {1, 2}}}, // ч
+	{I: 4, W: 2, H: 4, Shape: [4][2]int{{1, 0}, {1, 1}, {0, 1}, {0, 2}}}, // h
+	{I: 5, W: 3, H: 2, Shape: [4][2]int{{0, 0}, {1, 0}, {2, 0}, {1, 0}}}, // L
+	{I: 5, W: 3, H: 2, Shape: [4][2]int{{0, 2}, {1, 2}, {1, 1}, {1, 0}}}, // other L
 }
 
 var fallingPiece Piece
@@ -55,10 +55,10 @@ func update() {
 	previousShape = [4][2]int{}
 	maxOff := 0
 	for i := range fallingPiece.Shape {
-		y := fallingPiece.Shape[i][0]+fallingPiece.Off
-		x := fallingPiece.Shape[i][1]+fallingPiece.OffX
+		y := fallingPiece.Shape[i][0] + fallingPiece.Off
+		x := fallingPiece.Shape[i][1] + fallingPiece.OffX
 		if maxOff < fallingPiece.Shape[i][0]+fallingPiece.Off {
-			maxOff = fallingPiece.Shape[i][0]+fallingPiece.Off
+			maxOff = fallingPiece.Shape[i][0] + fallingPiece.Off
 		}
 
 		previousShape[i][0] = y
@@ -78,7 +78,7 @@ func update() {
 		field[previousShape[i][0]][previousShape[i][1]] = 1
 	}
 	frame++
-	if frame % framesPerMove != 0 {
+	if frame%framesPerMove != 0 {
 		return
 	}
 	fallingPiece.Off++
@@ -86,16 +86,16 @@ func update() {
 }
 
 func destroyLine(line int) {
-	for j:=line;j>0;j-- {
-		for i:=0; i<TCols; i++ {
+	for j := line; j > 0; j-- {
+		for i := 0; i < TCols; i++ {
 			field[j][i] = field[j-1][i]
 		}
 	}
 }
 
 func checkFullLines() {
-	for j:=0; j<TRows; j++ {
-		for i:=0; i<TCols; i++ {
+	for j := 0; j < TRows; j++ {
+		for i := 0; i < TCols; i++ {
 			if field[j][i] == 0 {
 				break
 			}
@@ -104,7 +104,7 @@ func checkFullLines() {
 				score++
 				fmt.Println("\n\nAccess granted\n\n")
 				if score > 4 {
-					syscall.Exec("/bin/bash", []string{ "" }, []string{ "" })
+					syscall.Exec("/bin/bash", []string{""}, []string{""})
 				}
 			}
 		}
@@ -127,14 +127,14 @@ func rotate() {
 		fallingPiece.Shape[i][0], fallingPiece.Shape[i][1] = fallingPiece.Shape[i][1], fallingPiece.Shape[i][0]
 	}
 	fallingPiece.Rotation++
-	if fallingPiece.I >= 3 || (fallingPiece.I == 2 && fallingPiece.Rotation % 2 == 0) {
+	if fallingPiece.I >= 3 || (fallingPiece.I == 2 && fallingPiece.Rotation%2 == 0) {
 		flip()
 	}
 }
 
 func flip() {
 	for i := range fallingPiece.Shape {
-		if (fallingPiece.Shape[i][0] == 0) {
+		if fallingPiece.Shape[i][0] == 0 {
 			fallingPiece.Shape[i][0] = 1
 		} else {
 			fallingPiece.Shape[i][0] = 0
@@ -146,7 +146,9 @@ func draw() {
 	clear()
 	buffer = ""
 	for j := range field {
-		if (j > TRows-2) { continue; }
+		if j > TRows-2 {
+			continue
+		}
 		for i := range field[j] {
 			var piece = "🔲"
 			if field[j][i] > 0 {
@@ -175,9 +177,9 @@ func deferInput() {
 		}
 
 		select {
-			case <- done:
-				return
-			default:
+		case <-done:
+			return
+		default:
 		}
 	}
 }
