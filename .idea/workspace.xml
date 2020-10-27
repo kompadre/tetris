@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9fb50552-d309-44e1-a17a-c5c9d34db5fa" name="Default Changelist" comment="" />
+    <list default="true" id="9fb50552-d309-44e1-a17a-c5c9d34db5fa" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/errors.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/main" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -15,6 +18,9 @@
     </option>
   </component>
   <component name="GOROOT" path="/usr/local/go" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="GoLibraries">
     <option name="urls">
       <list>
@@ -23,6 +29,7 @@
     </option>
   </component>
   <component name="ProjectId" id="1jQW8EUX4NZjRH5WinbCvUY94fF" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -66,6 +73,18 @@
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
     <state x="2658" y="299" width="424" height="488" key="FileChooserDialogImpl/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1603736998395" />
+    <state x="2745" y="440" width="270" height="204" key="Github.ShareDialog" timestamp="1603820061109">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2745" y="440" width="270" height="204" key="Github.ShareDialog/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1603820061109" />
+    <state x="2700" y="249" width="349" height="586" key="Github.UntrackedFilesDialog" timestamp="1603820069381">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2700" y="249" width="349" height="586" key="Github.UntrackedFilesDialog/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1603820069381" />
+    <state x="2475" y="276" width="800" height="532" key="Vcs.Push.Dialog.v2" timestamp="1603820134468">
+      <screen x="1920" y="0" width="1920" height="1080" />
+    </state>
+    <state x="2475" y="276" width="800" height="532" key="Vcs.Push.Dialog.v2/1920.0.1920.1080/0.0.1920.1080@1920.0.1920.1080" timestamp="1603820134468" />
     <state x="2563" y="174" width="634" height="732" key="find.popup" timestamp="1603786791841">
       <screen x="1920" y="0" width="1920" height="1080" />
     </state>
