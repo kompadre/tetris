@@ -6,7 +6,6 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
-	"syscall"
 	"time"
 )
 
@@ -16,25 +15,44 @@ const TRows = 16
 var field [TRows + 1][TCols + 1]int
 var debug = ""
 var framesPerMove = 40
+var nextPiece = 2
+var gameOver = false
+var lock = true
 
 type Piece struct {
-	I        int
-	W        int
-	H        int
-	Off      int
-	OffX     int
-	Shape    [4][2]int
-	Rotation int
+	I             int
+	W             int
+	H             int
+	Off           int
+	OffX          int
+	Shape         [4][2]int
+	Rotation      int
+	RotatedShapes [][4][2]int
 }
 
+/*
+
+	{{-1, -1}, {-1, 0}, {-1, 1}, {0, 0}},
+	{{-1, 0}, {0, 0}, {0, 1}, {1, 0}},
+	{{-1, 1}, {0, 1}, {0, 0}, {1, 1}},
+	{{ 0, -1}, {0, 0}, {0, 1}, {1, 0}},
+
+
+*/
+
 var pieces = []Piece{
-	{I: 0, W: 4, H: 1, Shape: [4][2]int{{0, 0}, {1, 0}, {2, 0}, {3, 0}}}, // ----
-	{I: 1, W: 2, H: 2, Shape: [4][2]int{{0, 0}, {0, 1}, {1, 0}, {1, 1}}}, // ::
-	{I: 2, W: 3, H: 2, Shape: [4][2]int{{0, 0}, {0, 1}, {0, 2}, {1, 1}}}, // T
-	{I: 3, W: 2, H: 4, Shape: [4][2]int{{0, 0}, {0, 1}, {1, 1}, {1, 2}}}, // ч
-	{I: 4, W: 2, H: 4, Shape: [4][2]int{{1, 0}, {1, 1}, {0, 1}, {0, 2}}}, // h
-	{I: 5, W: 3, H: 2, Shape: [4][2]int{{0, 0}, {1, 0}, {2, 0}, {1, 0}}}, // L
-	{I: 5, W: 3, H: 2, Shape: [4][2]int{{0, 2}, {1, 2}, {1, 1}, {1, 0}}}, // other L
+	{I: 1, W: 4, H: 1, Shape: [4][2]int{{0, 0}, {1, 0}, {2, 0}, {3, 0}}},
+	{I: 2, W: 2, H: 2, Shape: [4][2]int{{0, 0}, {0, 1}, {1, 0}, {1, 1}}},
+	{I: 3, W: 3, H: 2, Shape: [4][2]int{{-1, -1}, {-1, 0}, {-1, 1}, {0, 0}},
+		RotatedShapes: [][4][2]int{
+			{{-1, -1}, {-1, 0}, {-1, 1}, {0, 0}},
+			{{-1, 0}, {0, 0}, {0, 1}, {1, 0}},
+			{{0, -1}, {0, 0}, {0, 1}, {-1, 0}},
+			{{-1, 1}, {0, 1}, {0, 0}, {1, 1}}}},
+	{I: 4, W: 2, H: 4, Shape: [4][2]int{{-1, -1}, {-1, 0}, {0, 0}, {0, 1}},
+		RotatedShapes: [][4][2]int{
+			{{-1, -1}, {-1, 0}, {0, 0}, {0, 1}},
+			{{-1, 1}, {0, 1}, {0, 0}, {1, 0}}}},
 }
 
 var fallingPiece Piece
@@ -57,6 +75,22 @@ func update() {
 	for i := range fallingPiece.Shape {
 		y := fallingPiece.Shape[i][0] + fallingPiece.Off
 		x := fallingPiece.Shape[i][1] + fallingPiece.OffX
+
+		if x > TCols {
+			fallingPiece.OffX--
+			return
+		}
+		if x < 0 {
+			fallingPiece.OffX++
+			return
+		}
+
+		if y < 0 {
+			fallingPiece.Off++
+			return
+		}
+
+		fmt.Printf("X: %d, Y: %d\n", x, y)
 		if maxOff < fallingPiece.Shape[i][0]+fallingPiece.Off {
 			maxOff = fallingPiece.Shape[i][0] + fallingPiece.Off
 		}
@@ -64,7 +98,12 @@ func update() {
 		previousShape[i][0] = y
 		previousShape[i][1] = x
 
-		if field[previousShape[i][0]][previousShape[i][1]] == 2 || maxOff >= TRows-1 {
+		if field[y][x] == 2 && fallingPiece.Off == 0 {
+			fmt.Printf("\nGAME OVER\n")
+			gameOver = true
+		}
+
+		if field[y][x] == 2 || maxOff >= TRows-1 {
 			previousShape = previouserShape
 			newPiece()
 			return
@@ -87,7 +126,7 @@ func update() {
 
 func destroyLine(line int) {
 	for j := line; j > 0; j-- {
-		for i := 0; i < TCols; i++ {
+		for i := 0; i <= TCols; i++ {
 			field[j][i] = field[j-1][i]
 		}
 	}
@@ -103,32 +142,40 @@ func checkFullLines() {
 				destroyLine(j)
 				score++
 				fmt.Println("\n\nAccess granted\n\n")
-				if score > 4 {
-					syscall.Exec("/bin/bash", []string{""}, []string{""})
-				}
+				/*
+					if score > 4 {
+						syscall.Exec("/bin/bash", []string{""}, []string{""})
+					}
+				*/
 			}
 		}
 	}
 }
 
 func newPiece() {
-	for i := range previousShape {
-		field[previousShape[i][0]][previousShape[i][1]] = 2
-		//debug += fmt.Sprintf("%d:%d ", previousShape[i][0], previousShape[i][1])
+	if fallingPiece.I > 0 {
+		for i := range previousShape {
+			field[previousShape[i][0]][previousShape[i][1]] = 2
+			//debug += fmt.Sprintf("%d:%d ", previousShape[i][0], previousShape[i][1])
+		}
+		previousShape = [4][2]int{}
+		checkFullLines()
 	}
-	previousShape = [4][2]int{}
-	checkFullLines()
-	fallingPiece = pieces[r.Intn(len(pieces))]
+	fallingPiece = pieces[nextPiece]
+	nextPiece = r.Intn(len(pieces))
 	fallingPiece.OffX = int(math.Round(float64(TCols/2) - float64(fallingPiece.W/2)))
+	framesPerMove = 40
 }
 
 func rotate() {
-	for i := range fallingPiece.Shape {
-		fallingPiece.Shape[i][0], fallingPiece.Shape[i][1] = fallingPiece.Shape[i][1], fallingPiece.Shape[i][0]
-	}
 	fallingPiece.Rotation++
-	if fallingPiece.I >= 3 || (fallingPiece.I == 2 && fallingPiece.Rotation%2 == 0) {
-		flip()
+	if len(fallingPiece.RotatedShapes) > 0 {
+		fallingPiece.Shape = fallingPiece.RotatedShapes[fallingPiece.Rotation%len(fallingPiece.RotatedShapes)]
+	} else {
+		for i := range fallingPiece.Shape {
+			fallingPiece.Shape[i][0], fallingPiece.Shape[i][1] = fallingPiece.Shape[i][1], fallingPiece.Shape[i][0]
+		}
+		fallingPiece.W, fallingPiece.H = fallingPiece.H, fallingPiece.W
 	}
 }
 
@@ -174,6 +221,8 @@ func deferInput() {
 			fallingPiece.OffX--
 		} else if string(b) == "A" {
 			rotate()
+		} else if string(b) == "B" {
+			framesPerMove = 5
 		}
 
 		select {
@@ -185,15 +234,21 @@ func deferInput() {
 }
 
 func main() {
-	done := make(chan bool)
-	go deferInput()
-	defer func() {
-		done <- true
-	}()
+	if lock {
+		done := make(chan bool)
+		go deferInput()
+		defer func() {
+			done <- true
+		}()
+	}
 	newPiece()
 	for {
 		update()
 		draw()
+		if gameOver {
+			fmt.Println("GAME OVER")
+			break
+		}
 		time.Sleep(16 * time.Millisecond)
 	}
 }
