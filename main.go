@@ -9,13 +9,13 @@ import (
 	"time"
 )
 
-const TCols = 12
+const TCols = 8
 const TRows = 16
 
 var field [TRows + 1][TCols + 1]int
 var debug = ""
 var framesPerMove = 40
-var nextPiece = 2
+var nextPiece = 0
 var gameOver = false
 var lock = true
 
@@ -41,7 +41,7 @@ type Piece struct {
 */
 
 var pieces = []Piece{
-	{I: 1, W: 4, H: 1, Shape: [4][2]int{{0, 0}, {1, 0}, {2, 0}, {3, 0}}},
+	{I: 1, W: 4, H: 1, Shape: [4][2]int{{-1, 0}, {0, 0}, {1, 0}, {2, 0}}},
 	{I: 2, W: 2, H: 2, Shape: [4][2]int{{0, 0}, {0, 1}, {1, 0}, {1, 1}}},
 	{I: 3, W: 3, H: 2, Shape: [4][2]int{{-1, -1}, {-1, 0}, {-1, 1}, {0, 0}},
 		RotatedShapes: [][4][2]int{
@@ -71,7 +71,7 @@ func update() {
 	//debug = ""
 	var previouserShape = previousShape
 	previousShape = [4][2]int{}
-	maxOff := 0
+	maxY := 0
 	for i := range fallingPiece.Shape {
 		y := fallingPiece.Shape[i][0] + fallingPiece.Off
 		x := fallingPiece.Shape[i][1] + fallingPiece.OffX
@@ -90,9 +90,9 @@ func update() {
 			return
 		}
 
-		fmt.Printf("X: %d, Y: %d\n", x, y)
-		if maxOff < fallingPiece.Shape[i][0]+fallingPiece.Off {
-			maxOff = fallingPiece.Shape[i][0] + fallingPiece.Off
+		//fmt.Printf("X: %d, Y: %d\n", x, y)
+		if maxY < y {
+			maxY = y
 		}
 
 		previousShape[i][0] = y
@@ -103,11 +103,17 @@ func update() {
 			gameOver = true
 		}
 
-		if field[y][x] == 2 || maxOff >= TRows-1 {
+		if field[y][x] == 2 {
 			previousShape = previouserShape
 			newPiece()
 			return
 		}
+	}
+
+	if maxY >= TRows-1 {
+		previousShape = previouserShape
+		newPiece()
+		return
 	}
 
 	for i := range previouserShape {
@@ -121,7 +127,7 @@ func update() {
 		return
 	}
 	fallingPiece.Off++
-	debug = fmt.Sprintf("Frame: %d, Score: %d", frame, score)
+	//debug = fmt.Sprintf("Frame: %d, Score: %d", frame, score)
 }
 
 func destroyLine(line int) {
@@ -134,20 +140,21 @@ func destroyLine(line int) {
 
 func checkFullLines() {
 	for j := 0; j < TRows; j++ {
-		for i := 0; i < TCols; i++ {
+		i := 0
+		for ; i <= TCols; i++ {
 			if field[j][i] == 0 {
 				break
 			}
-			if i == TCols-1 {
-				destroyLine(j)
-				score++
-				fmt.Println("\n\nAccess granted\n\n")
-				/*
-					if score > 4 {
-						syscall.Exec("/bin/bash", []string{""}, []string{""})
-					}
-				*/
-			}
+		}
+		if i > TCols {
+			destroyLine(j)
+			score++
+			fmt.Println("\n\nAccess granted\n\n")
+			/*
+				if score > 4 {
+					syscall.Exec("/bin/bash", []string{""}, []string{""})
+				}
+			*/
 		}
 	}
 }
@@ -167,6 +174,13 @@ func newPiece() {
 	framesPerMove = 40
 }
 
+func clean() {
+	for i := range previousShape {
+		field[previousShape[i][0]][previousShape[i][1]] = 0
+	}
+	previousShape = fallingPiece.Shape
+}
+
 func rotate() {
 	fallingPiece.Rotation++
 	if len(fallingPiece.RotatedShapes) > 0 {
@@ -177,6 +191,7 @@ func rotate() {
 		}
 		fallingPiece.W, fallingPiece.H = fallingPiece.H, fallingPiece.W
 	}
+	//clean();
 }
 
 func flip() {
@@ -187,6 +202,7 @@ func flip() {
 			fallingPiece.Shape[i][0] = 0
 		}
 	}
+	clean()
 }
 
 func draw() {
@@ -197,16 +213,19 @@ func draw() {
 			continue
 		}
 		for i := range field[j] {
-			var piece = "🔲"
-			if field[j][i] > 0 {
-				piece = "🔳"
+			var piece = "   " //"🔲"
+			if field[j][i] == 1 {
+				piece = "[X]" //"🔳"
+			}
+			if field[j][i] == 2 {
+				piece = "[Y]"
 			}
 			buffer += piece
 		}
 		buffer += "\n"
 	}
-	debugStr := fmt.Sprintf("[ %s ]", debug)
-	fmt.Print(buffer + "\n====\n>>>" + debugStr + "<<<\n")
+	//debugStr := fmt.Sprintf("[ %s ]", debug)
+	fmt.Print(buffer)
 }
 
 func deferInput() {
